@@ -1,0 +1,236 @@
+[
+  {
+    "time": "2026-07-13 00:42:37",
+    "type": "CPU_SPIKE",
+    "severity": "WARNING",
+    "current_value": 36.59,
+    "baseline_value": 7.62,
+    "message": "WARNING: Defonstruksi moving baseline, anomali beban ringan terdeteksi.",
+    "current_health_score": 85
+  },
+  {
+    "time": "2026-07-13 00:42:42",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 40.84,
+    "baseline_value": 10.62,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:42:47",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 53.86,
+    "baseline_value": 14.05,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:42:52",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 60.29,
+    "baseline_value": 18.88,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:42:57",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 66.45,
+    "baseline_value": 24.29,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:43:02",
+    "type": "CPU_SPIKE",
+    "severity": "CRITICAL",
+    "current_value": 72.72,
+    "baseline_value": 30.34,
+    "message": "EMERGENCY: Beban komputasi ekstrim terdeteksi pada kluster kontainer!",
+    "current_health_score": 55
+  },
+  {
+    "time": "2026-07-13 00:49:24",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 41.04,
+    "baseline_value": 7.48,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:49:29",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 40.8,
+    "baseline_value": 11.17,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:49:34",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 49.35,
+    "baseline_value": 14.89,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:49:40",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 65.69,
+    "baseline_value": 19.32,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:49:45",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 66.81,
+    "baseline_value": 25.37,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:55:52",
+    "type": "CPU_SPIKE",
+    "severity": "WARNING",
+    "current_value": 31.25,
+    "baseline_value": 5.52,
+    "message": "WARNING: Defonstruksi moving baseline, anomali beban ringan terdeteksi.",
+    "current_health_score": 85
+  },
+  {
+    "time": "2026-07-13 00:55:57",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 49.79,
+    "baseline_value": 8.12,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:56:02",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 49.48,
+    "baseline_value": 12.46,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:56:07",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 50.08,
+    "baseline_value": 16.84,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:56:12",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 55.99,
+    "baseline_value": 21.3,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:56:17",
+    "type": "CPU_SPIKE",
+    "severity": "CRITICAL",
+    "current_value": 75.29,
+    "baseline_value": 26.35,
+    "message": "EMERGENCY: Beban komputasi ekstrim terdeteksi pada kluster kontainer!",
+    "current_health_score": 55
+  },
+  {
+    "time": "2026-07-13 00:56:22",
+    "type": "CPU_SPIKE",
+    "severity": "CRITICAL",
+    "current_value": 74.0,
+    "baseline_value": 33.47,
+    "message": "EMERGENCY: Beban komputasi ekstrim terdeteksi pada kluster kontainer!",
+    "current_health_score": 55
+  },
+  {
+    "time": "2026-07-13 00:58:14",
+    "type": "CPU_SPIKE",
+    "severity": "WARNING",
+    "current_value": 23.83,
+    "baseline_value": 4.12,
+    "message": "WARNING: Defonstruksi moving baseline, anomali beban ringan terdeteksi.",
+    "current_health_score": 85
+  },
+  {
+    "time": "2026-07-13 00:58:20",
+    "type": "CPU_SPIKE",
+    "severity": "WARNING",
+    "current_value": 33.9,
+    "baseline_value": 6.09,
+    "message": "WARNING: Defonstruksi moving baseline, anomali beban ringan terdeteksi.",
+    "current_health_score": 85
+  },
+  {
+    "time": "2026-07-13 00:58:25",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 46.25,
+    "baseline_value": 9.2,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:58:30",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 46.09,
+    "baseline_value": 13.48,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:58:35",
+    "type": "CPU_SPIKE",
+    "severity": "HIGH",
+    "current_value": 44.84,
+    "baseline_value": 17.73,
+    "message": "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat.",
+    "current_health_score": 65
+  },
+  {
+    "time": "2026-07-13 00:58:40",
+    "type": "CPU_SPIKE",
+    "severity": "CRITICAL",
+    "current_value": 72.7,
+    "baseline_value": 21.86,
+    "message": "EMERGENCY: Beban komputasi ekstrim terdeteksi pada kluster kontainer!",
+    "current_health_score": 55
+  },
+  {
+    "time": "2026-07-13 00:58:45",
+    "type": "CPU_SPIKE",
+    "severity": "CRITICAL",
+    "current_value": 72.48,
+    "baseline_value": 28.65,
+    "message": "EMERGENCY: Beban komputasi ekstrim terdeteksi pada kluster kontainer!",
+    "current_health_score": 55
+  },
+  {
+    "time": "2026-07-13 00:58:50",
+    "type": "CPU_SPIKE",
+    "severity": "CRITICAL",
+    "current_value": 73.13,
+    "baseline_value": 35.41,
+    "message": "EMERGENCY: Beban komputasi ekstrim terdeteksi pada kluster kontainer!",
+    "current_health_score": 55
+  }
+]

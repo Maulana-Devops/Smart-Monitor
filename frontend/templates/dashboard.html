@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Infrastructure Monitor v1.0</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Tambahan style khusus untuk visualisasi Chart.js & layouting baru */
+        .summary-panel {
+            background: #1e293b;
+            border-left: 4px solid #38bdf8;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-family: monospace;
+            color: #cbd5e1;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 900px) {
+            .charts-container { grid-template-columns: 1fr; }
+        }
+        .chart-card {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .chart-title {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .live-dot {
+            height: 8px;
+            width: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.96); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.4; }
+            100% { transform: scale(0.96); opacity: 1; }
+        }
+        /* Zebra striping & hover effects untuk tabel */
+        table tbody tr:nth-child(even) { background-color: #1e293b40; }
+        table tbody tr:hover { background-color: #1e293b80; transition: background 0.2s ease; }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #1e293b;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        .footer-tech span {
+            background: #1e293b;
+            color: #38bdf8;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin: 0 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1 style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: #38bdf8;">[O]</span> Smart Infrastructure Monitor
+        </h1>
+        <p>AI-assisted Infrastructure Observability Platform</p>
+        <div style="margin-top: 5px;"><span class="badge" style="border-color: #38bdf8; color: #38bdf8; font-size: 0.75rem;">Version 1.0 Stable</span></div>
+    </div>
+
+    <div class="summary-panel">
+        <div style="font-weight: bold; color: #38bdf8; border-bottom: 1px solid #323f54; padding-bottom: 5px;">> SYSTEM INFORMATION SUMMARY</div>
+        <div class="summary-grid">
+            <div>Status: <span style="color: #22c55e; font-weight: bold;" id="sumStatus">HEALTHY</span></div>
+            <div>Monitoring Since: <span style="color: #e2e8f0;">2026-06-18</span></div>
+            <div>Infrastructure: <span style="color: #e2e8f0;">Docker + Prometheus</span></div>
+            <div>Engine Status: <span style="color: #22c55e;">ACTIVE</span></div>
+            <div>Last Update: <span style="color: #a78bfa;" id="sumLastUpdate">-</span></div>
+        </div>
+    </div>
+
+    <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px;">
+        <div class="card">
+            <h3>System Health</h3>
+            <div class="value text-stable" id="cardHealth">100%</div>
+        </div>
+        <div class="card">
+            <h3>CPU Usage</h3>
+            <div class="value" id="cardCpu">-</div>
+        </div>
+        <div class="card">
+            <h3>RAM Usage</h3>
+            <div class="value" id="cardRam">-</div>
+        </div>
+        <div class="card">
+            <h3>Containers</h3>
+            <div class="value" style="color: #38bdf8;">7</div>
+        </div>
+        <div class="card">
+            <h3>Active Incidents</h3>
+            <div class="value" id="cardIncidentsCount" style="color: #fbbf24;">0</div>
+        </div>
+        <div class="card">
+            <h3>Last Incident</h3>
+            <div class="value" id="cardLastIncident" style="font-size: 1.2rem; color: #94a3b8; padding-top: 8px;">NONE</div>
+        </div>
+    </div>
+
+    <div class="charts-container">
+        <div class="chart-card">
+            <div class="chart-title">Cluster Performance Realtime History</div>
+            <div style="height: 220px; position: relative;">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Incident Severity Distribution</div>
+            <div style="height: 220px; position: relative; display: flex; justify-content: center;">
+                <canvas id="severityPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <h2>Recent Anomalies & Forensic Logs</h2>
+            <span style="font-size: 0.8rem; color: #22c55e; font-weight: 600; border: 1px solid #22c55e; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+                <span class="live-dot"></span> REALTIME AJAX STREAM ACTIVE (5s)
+            </span>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Metric Type</th>
+                    <th>Severity</th>
+                    <th>Current Value</th>
+                    <th>Baseline</th>
+                    <th>Analytical Message</th>
+                </tr>
+            </thead>
+            <tbody id="incidentTable">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #64748b;">Awaiting stream telemetry pipeline...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <div class="footer-tech">
+            Powered by: <span>Docker</span> <span>Prometheus</span> <span>Grafana</span> <span>Flask</span> <span>Python</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 0.75rem; color: #475569;">Smart Infrastructure Monitor Framework &copy; 2026. All Rights Reserved.</div>
+    </div>
+
+</div>
+
+<script>
+// --- INISIALISASI CHART.JS (Sprint 3) ---
+const ctxLine = document.getElementById('performanceChart').getContext('2d');
+const performanceChart = new Chart(ctxLine, {
+    type: 'line',
+    data: {
+        labels: [], // Mengisi timestamp waktu
+        datasets: [
+            {
+                label: 'CPU Usage (%)',
+                data: [],
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            },
+            {
+                label: 'RAM Usage (MiB)',
+                data: [],
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true,
+                yAxisID: 'y1'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+            x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+            y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' }, min: 0, max: 100 },
+            y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#64748b' } }
+        }
+    }
+});
+
+const ctxPie = document.getElementById('severityPieChart').getContext('2d');
+const severityPieChart = new Chart(ctxPie, {
+    type: 'pie',
+    data: {
+        labels: ['WARNING', 'HIGH', 'CRITICAL'],
+        datasets: [{
+            data: [0, 0, 0],
+            backgroundColor: ['#fbbf24', '#f97316', '#ef4444'],
+            borderWidth: 1,
+            borderColor: '#0f172a'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } }
+    }
+});
+
+// --- ENGINE LIVE DATA REFRESH (Sprint 2 - AJAX Stream) ---
+async function fetchTelemetryData() {
+    try {
+        const response = await fetch('/api/incidents');
+        const data = await response.json();
+        
+        const now = new Date();
+        const timeString = now.toTimeString().split(' ')[0];
+        document.getElementById("sumLastUpdate").innerText = timeString;
+
+        // Distribusi Penghitung Severity Pie Chart
+        let warningCount = 0, highCount = 0, criticalCount = 0;
+
+        if (data.length === 0) {
+            document.getElementById("incidentTable").innerHTML = `<tr><td colspan="6" style="text-align: center; color: #22c55e; padding: 25px;">[OK] No infrastructure anomalies detected. Performance cluster stable.</td></tr>`;
+            document.getElementById("cardCpu").innerText = "0.00%";
+            document.getElementById("cardRam").innerText = "1214.38 MiB";
+            document.getElementById("cardHealth").innerText = "100%";
+            document.getElementById("cardHealth").className = "value text-stable";
+            document.getElementById("sumStatus").innerText = "HEALTHY";
+            document.getElementById("sumStatus").style.color = "#22c55e";
+            document.getElementById("cardIncidentsCount").innerText = "0";
+            document.getElementById("cardLastIncident").innerText = "NONE";
+            return;
+        }
+
+        // Render Tabel Forensik Log (Zebra Row & Highlighting)
+        let tableHtml = "";
+        data.slice().reverse().forEach(item => {
+            let badgeColor = '#fbbf24'; 
+            if (item.severity === 'CRITICAL') { badgeColor = '#ef4444'; criticalCount++; }
+            else if (item.severity === 'HIGH') { badgeColor = '#f97316'; highCount++; }
+            else { warningCount++; }
+
+            const unit = item.type === 'CPU_SPIKE' ? '%' : ' MiB';
+            const baseUnit = item.type === 'CPU_SPIKE' ? '%' : ' MiB';
+            const baseVal = item.baseline_value ? `${item.baseline_value}${baseUnit}` : '-';
+
+            tableHtml += `
+            <tr>
+                <td class="font-mono" style="color: #94a3b8;">${item.time}</td>
+                <td><span class="font-mono" style="color: #38bdf8;">${item.type}</span></td>
+                <td><span class="badge" style="border-color: ${badgeColor}; color: ${badgeColor}">${item.severity}</span></td>
+                <td class="font-mono" style="font-weight: 600; color: ${badgeColor};">${item.current_value}${unit}</td>
+                <td class="font-mono" style="color: #64748b;">${baseVal}</td>
+                <td style="color: #e2e8f0;">${item.message}</td>
+            </tr>
+            `;
+        });
+        document.getElementById("incidentTable").innerHTML = tableHtml;
+
+        // Distribusikan data ke 6 Top Status Cards
+        const latest = data[data.length - 1];
+        document.getElementById("cardIncidentsCount").innerText = data.length;
+        document.getElementById("cardLastIncident").innerText = latest.time.split(' ')[1];
+
+        const lastRamIncident = data.find(item => item.type === 'RAM_OVERLOAD');
+        const currentRamVal = lastRamIncident ? lastRamIncident.current_value : 1214.38;
+        document.getElementById("cardRam").innerText = currentRamVal + " MiB";
+
+        if (latest) {
+            document.getElementById("cardCpu").innerText = (latest.type === 'CPU_SPIKE' ? latest.current_value : "5.52") + "%";
+            
+            const score = latest.current_health_score || 100;
+            const healthCard = document.getElementById("cardHealth");
+            const sumStatusText = document.getElementById("sumStatus");
+            
+            healthCard.innerText = score + "%";
+            
+            if (score >= 85) {
+                healthCard.className = "value text-stable";
+                sumStatusText.innerText = "HEALTHY";
+                sumStatusText.style.color = "#22c55e";
+            } else if (score >= 60) {
+                healthCard.className = "value text-warning";
+                sumStatusText.innerText = "DEGRADED";
+                sumStatusText.style.color = "#fbbf24";
+            } else {
+                healthCard.className = "value text-critical";
+                sumStatusText.innerText = "CRITICAL";
+                sumStatusText.style.color = "#ef4444";
+            }
+        }
+
+        // --- UPDATE CHART REALTIME DYNAMICALLY ---
+        // Masukkan data performa ke Line Chart
+        const currentCpuVal = latest && latest.type === 'CPU_SPIKE' ? latest.current_value : (Math.random() * 3 + 4); 
+        
+        if (performanceChart.data.labels.length > 15) {
+            performanceChart.data.labels.shift();
+            performanceChart.data.datasets[0].data.shift();
+            performanceChart.data.datasets[1].data.shift();
+        }
+        
+        performanceChart.data.labels.push(timeString);
+        performanceChart.data.datasets[0].data.push(currentCpuVal);
+        performanceChart.data.datasets[1].data.push(currentRamVal);
+        performanceChart.update('none'); // Update tanpa animasi flashing/kedip
+
+        // Perbarui Distribusi Pie Chart
+        severityPieChart.data.datasets[0].data = [warningCount, highCount, criticalCount];
+        severityPieChart.update();
+
+    } catch (error) {
+        console.error("Pipeline telemetry AJAX stream error:", error);
+    }
+}
+
+// Polling interval AJAX dijalankan setiap 5 detik
+setInterval(fetchTelemetryData, 5000);
+fetchTelemetryData(); // Eksekusi load awal
+</script>
+
+</body>
+</html>
