@@ -1,18 +1,28 @@
-# Python
 venv/
 __pycache__/
-*.py[cod]
+*.pyc
 
-# Environment
+*.bak
+*.bak-*
+backups/
+backup/
+
+logs/current_status.json
+logs/incident_log.json
+logs/incident_log.backup.json
+logs/network_alerts.json
+
+current_status.json
+incident_log.json
+telemetry_history.json
+
+=
+RAM_ALERT_THRESHOLD:
+
+*.service -n 50 --no-pager
+ystemctl status smart-api.service --no-pager -l
+mart-api.service -n 50 --no-pager
+mart-monitor.service -n 50 --no-pager
+
 .env
-
-# Logs
 *.log
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db

@@ -1,15 +1,14 @@
-import os
+import requests
 import time
 import json
-import requests
+import os
 from datetime import datetime
 
 # ==================== CONFIGURATION ====================
-PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://localhost:9090/api/v1/query")
+PROMETHEUS_URL = "http://localhost:9090/api/v1/query"
 
-# Disarankan menggunakan Environment Variable jika memungkinkan
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "8713469425:AAGHeheEcj-P3PvLKbkiWY3rIDU8sgDwZKk")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "7707167170")
+TELEGRAM_TOKEN = "8713469425:AAGHeheEcj-P3PvLKbkiWY3rIDU8sgDwZKk"
+TELEGRAM_CHAT_ID = "7707167170"
 
 QUERIES = {
     "total_cpu": 'sum(rate(container_cpu_usage_seconds_total{id=~"/system.slice/docker-.*"}[1m])) * 100',
@@ -19,14 +18,10 @@ QUERIES = {
 RAM_ALERT_THRESHOLD = 1500.0
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Memastikan direktori logs ada
-LOGS_DIR = os.path.join(BASE_DIR, "logs")
-os.makedirs(LOGS_DIR, exist_ok=True)
+LOG_FILE_PATH = os.path.join(BASE_DIR, "logs", "incident_log.json")
+STATUS_FILE_PATH = os.path.join(BASE_DIR, "logs", "current_status.json")
 
-LOG_FILE_PATH = os.path.join(LOGS_DIR, "incident_log.json")
-STATUS_FILE_PATH = os.path.join(LOGS_DIR, "current_status.json")
-
-ALERT_COOLDOWN = 60  # dalam detik
+ALERT_COOLDOWN = 60 
 last_cpu_alert_time = 0
 last_ram_alert_time = 0
 
@@ -52,7 +47,7 @@ def catat_insiden(tipe_insiden, tingkat_bahaya, nilai_sekarang, nilai_baseline, 
         try:
             with open(LOG_FILE_PATH, 'r') as file_json:
                 isi_log_lama = json.load(file_json)
-        except Exception:
+        except:
             isi_log_lama = []
             
     isi_log_lama.append(data_insiden_baru)
@@ -60,11 +55,17 @@ def catat_insiden(tipe_insiden, tingkat_bahaya, nilai_sekarang, nilai_baseline, 
     try:
         with open(LOG_FILE_PATH, 'w') as file_json:
             json.dump(isi_log_lama, file_json, indent=2)
-        print(f"[LOGGED] [{tingkat_bahaya}] {tipe_insiden} disimpan. Health Score: {skor_saat_ini}%")
+        print(f"[LOGGED] [{tingkat_bahaya}] {tipe_insiden} disimpan. Current Health: {skor_saat_ini}%")
     except Exception as e:
         print(f"Gagal menulis berkas incident_log.json: {e}")
 
 def simpan_status(cpu, ram, health_score, status):
+    """
+    Menyimpan kondisi sistem saat ini.
+    File ini akan dibaca oleh dashboard sehingga status
+    selalu mengikuti kondisi terbaru, bukan histori incident.
+    """
+
     data = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "cpu": round(cpu, 2),
@@ -76,8 +77,9 @@ def simpan_status(cpu, ram, health_score, status):
     try:
         with open(STATUS_FILE_PATH, "w") as f:
             json.dump(data, f, indent=4)
+
     except Exception as e:
-        print(f"Gagal menyimpan current_status.json: {e}")
+        print(f"Gagal menyimpan current_status.json : {e}")
 
 def kirim_telegram(pesan):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -91,11 +93,10 @@ def query_prometheus(query_string):
     try:
         response = requests.get(PROMETHEUS_URL, params={'query': query_string}, timeout=5)
         data = response.json()
-        if data.get('status') == 'success' and data['data']['result']:
+        if data['status'] == 'success' and data['data']['result']:
             return float(data['data']['result'][0]['value'][1])
         return 0.0
-    except Exception as e:
-        print(f"Error querying Prometheus: {e}")
+    except:
         return None
 
 def kalkulasi_health_score_v2(cpu, ram):
@@ -132,7 +133,7 @@ def tentukan_severity_cpu(cpu_val, baseline_val):
     elif cpu_val > 40.0:
         return "HIGH", "HIGH LOAD: Lonjakan CPU tinggi, performa aplikasi mulai terhambat."
     else:
-        return "WARNING", "WARNING: Deconstructive moving baseline, anomali beban ringan terdeteksi."
+        return "WARNING", "WARNING: Defonstruksi moving baseline, anomali beban ringan terdeteksi."
 
 if __name__ == "__main__":
     print("Smart Infrastructure Analyzer (v1.4 - Production Intelligence) Active...")
@@ -149,20 +150,21 @@ if __name__ == "__main__":
             if cpu_now is not None and ram_now is not None:
                 skor_kesehatan, status_sistem = kalkulasi_health_score_v2(cpu_now, ram_now)
 
-                # 1. Selalu perbarui status real-time untuk dashboard
-                simpan_status(cpu_now, ram_now, skor_kesehatan, status_sistem)
+		    simpan_status(
+    		        cpu_now,
+		        ram_now,
+    		        skor_kesehatan,
+    		        status_sistem
+		    )
 
-                print(
-                    f"[{waktu_sekarang}] CPU: {cpu_now:.2f}% | "
-                    f"RAM: {ram_now:.2f} MiB | "
-                    f"Health Score: {skor_kesehatan}% [{status_sistem}]"
-                )
-                
-                # 2. Analisis Baseline & CPU Spike
-                if len(cpu_history) >= 3:
+		    print(
+    		        f"[{waktu_sekarang}] CPU: {cpu_now:.2f}% | "
+    		        f"RAM: {ram_now:.2f} MiB | "
+    		        f"Health Score: {skor_kesehatan}% [{status_sistem}]"
+		    )                
+		    if len(cpu_history) >= 3:
                     baseline = sum(cpu_history) / len(cpu_history)
                     
-                    # Deteksi lonjakan CPU
                     if cpu_now > (baseline * 2) and cpu_now > 15.0:
                         sev_level, sev_msg = tentukan_severity_cpu(cpu_now, baseline)
                         
@@ -173,7 +175,7 @@ if __name__ == "__main__":
                                 f"--------------------------------------------------\n"
                                 f"*CPU Current:* `{cpu_now:.2f}%` (Baseline: {baseline:.2f}%)\n"
                                 f"*System Health:* `{skor_kesehatan}%` [{status_sistem}]\n"
-                                f"*RAM Usage:* `{ram_now:.2f} MiB`\n"
+                                f"*RAM usage:* `{ram_now:.2f} MiB`\n"
                                 f"*Waktu Kejadian:* `{waktu_sekarang}`\n\n"
                                 f"*Analisis:* {sev_msg}"
                             )
@@ -188,38 +190,35 @@ if __name__ == "__main__":
                             pesan_teks=sev_msg,
                             skor_saat_ini=skor_kesehatan
                         )
-                    else:
-                        # Hanya update history jika CPU dalam keadaan wajar/normal
-                        # Agar baseline tidak hancur akibat terkontaminasi spike
-                        cpu_history.append(cpu_now)
-                        if len(cpu_history) > CPU_HISTORY_LIMIT:
-                            cpu_history.pop(0)
+                    
+                    if ram_now > RAM_ALERT_THRESHOLD:
+                        if current_timestamp - last_ram_alert_time > ALERT_COOLDOWN:
+                            print(f"Menembakkan High Memory Alert ke Telegram...")
+                            pesan_ram = (
+                                f"*SMART MONITOR ALERT: HIGH MEMORY*\n"
+                                f"--------------------------------------------------\n"
+                                f"*RAM Current:* `{ram_now:.2f} MiB`\n"
+                                f"*System Health:* `{skor_kesehatan}%` [{status_sistem}]\n"
+                                f"*Waktu Kejadian:* `{waktu_sekarang}`\n"
+                            )
+                            kirim_telegram(pesan_ram)
+                            last_ram_alert_time = current_timestamp
+                        
+                        catat_insiden(
+                            tipe_insiden="RAM_OVERLOAD",
+                            tingkat_bahaya="HIGH" if skor_kesehatan >= 60 else "CRITICAL",
+                            nilai_sekarang=ram_now,
+                            nilai_baseline=RAM_ALERT_THRESHOLD,
+                            pesan_teks="Penggunaan memori RAM kontainer melampaui ambang batas aman.",
+                            skor_saat_ini=skor_kesehatan
+                        )
+                        
                 else:
                     print(f"Mengumpulkan data awal untuk baseline... ({len(cpu_history)}/3)")
-                    cpu_history.append(cpu_now)
 
-                # 3. Analisis RAM Overload (Terpisah dari kondisi CPU)
-                if ram_now > RAM_ALERT_THRESHOLD:
-                    if current_timestamp - last_ram_alert_time > ALERT_COOLDOWN:
-                        print("Menembakkan High Memory Alert ke Telegram...")
-                        pesan_ram = (
-                            f"*SMART MONITOR ALERT: HIGH MEMORY*\n"
-                            f"--------------------------------------------------\n"
-                            f"*RAM Current:* `{ram_now:.2f} MiB`\n"
-                            f"*System Health:* `{skor_kesehatan}%` [{status_sistem}]\n"
-                            f"*Waktu Kejadian:* `{waktu_sekarang}`\n"
-                        )
-                        kirim_telegram(pesan_ram)
-                        last_ram_alert_time = current_timestamp
-                    
-                    catat_insiden(
-                        tipe_insiden="RAM_OVERLOAD",
-                        tingkat_bahaya="HIGH" if skor_kesehatan >= 60 else "CRITICAL",
-                        nilai_sekarang=ram_now,
-                        nilai_baseline=RAM_ALERT_THRESHOLD,
-                        pesan_teks="Penggunaan memori RAM kontainer melampaui ambang batas aman.",
-                        skor_saat_ini=skor_kesehatan
-                    )
+                cpu_history.append(cpu_now)
+                if len(cpu_history) > CPU_HISTORY_LIMIT:
+                    cpu_history.pop(0)
                     
             time.sleep(5)
             
