@@ -370,7 +370,7 @@ This project is licensed under the MIT License.
 
 ### API Telemetry
 
-![API Telemetry](images/api-telementary.png)
+![API Telemetry](image/api-telementary.png)
 
 ### SIOD Dashboard
 
