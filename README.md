@@ -364,38 +364,37 @@ AI-assisted analysis remains part of the project's future development direction.
 ## License
 
 This project is licensed under the MIT License.
-
-````
+---
+---
 ## 📸 Dokumentasi
 
 ### API Telemetry
 
-![API Telemetry](./docs/images/api-telementary.png)
+![API Telemetry](images/api-telementary.png)
 
 ### SIOD Dashboard
 
-![SIOD Dashboard](./docs/images/dashbord.png)
+![SIOD Dashboard](images/dashbord.png)
 
 ### Docker Containers
 
-![Docker PS](./docs/images/docker-ps.png)
+![Docker PS](images/docker-ps.png)
 
 ### System Information
 
-![Hostnamectl](./docs/images/hostnamectl.png)
+![Hostnamectl](images/hostnamectl.png)
 
 ### Smart API
 
-![Smart API](./docs/images/smart-api.png)
+![Smart API](images/smart-api.png)
 
 ### Smart Monitor
 
-![Smart Monitor](./docs/images/smart-monitor.png)
+![Smart Monitor](images/smart-monitor.png)
 
 ### Systemd Services
 
-![Systemctl Failed](./docs/images/systemctl%20--failed.png)
+![Systemctl Failed](images/systemctl%20--failed.png)
 
+---
 
-
-Sedangkan `logs/incident_log.json` yang terus berubah **biarkan saja**, karena itu runtime data dan sudah kita masukkan ke `.gitignore`.
