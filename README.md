@@ -366,6 +366,35 @@ AI-assisted analysis remains part of the project's future development direction.
 This project is licensed under the MIT License.
 
 ````
+## 📸 Dokumentasi
+
+### API Telemetry
+
+![API Telemetry](./docs/images/api-telementary.png)
+
+### SIOD Dashboard
+
+![SIOD Dashboard](./docs/images/dashbord.png)
+
+### Docker Containers
+
+![Docker PS](./docs/images/docker-ps.png)
+
+### System Information
+
+![Hostnamectl](./docs/images/hostnamectl.png)
+
+### Smart API
+
+![Smart API](./docs/images/smart-api.png)
+
+### Smart Monitor
+
+![Smart Monitor](./docs/images/smart-monitor.png)
+
+### Systemd Services
+
+![Systemctl Failed](./docs/images/systemctl%20--failed.png)
 
 
 
