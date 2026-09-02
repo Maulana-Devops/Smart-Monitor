@@ -394,7 +394,7 @@ This project is licensed under the MIT License.
 
 ### Systemd Services
 
-![Systemctl Failed](images/systemctl%20--failed.png)
+![Systemctl Failed](image/systemctl%20--failed.png)
 
 ---
 
