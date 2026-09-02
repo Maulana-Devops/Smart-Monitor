@@ -374,23 +374,23 @@ This project is licensed under the MIT License.
 
 ### SIOD Dashboard
 
-![SIOD Dashboard](images/dashbord.png)
+![SIOD Dashboard](image/dashbord.png)
 
 ### Docker Containers
 
-![Docker PS](images/docker-ps.png)
+![Docker PS](image/docker-ps.png)
 
 ### System Information
 
-![Hostnamectl](images/hostnamectl.png)
+![Hostnamectl](image/hostnamectl.png)
 
 ### Smart API
 
-![Smart API](images/smart-api.png)
+![Smart API](image/smart-api.png)
 
 ### Smart Monitor
 
-![Smart Monitor](images/smart-monitor.png)
+![Smart Monitor](image/smart-monitor.png)
 
 ### Systemd Services
 
